@@ -143,7 +143,7 @@
 
     <div id="toast-notification" class="bg-primary-blue text-white p-4 rounded-lg shadow-xl flex items-center space-x-3">
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        <span>Item successfully added to cart!</span>
+        <span id="toast-message">Item successfully added to cart!</span>
     </div>
 
     <a href="https://www.talentronaut.in/" target="_blank"
@@ -217,7 +217,7 @@
                             <h3 class="text-xl font-semibold text-dark-navy mb-1">Classic Frames</h3>
                             <p class="text-gray-600 mb-3">Stylish & Durable</p>
                             <span class="text-2xl font-bold text-primary-blue">₹ 1,999</span>
-                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                            <button onclick="addToCart('Classic Frames', 1999)" data-name="Classic Frames" data-price="1999" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
                         </div>
                     </div>
 
@@ -227,7 +227,7 @@
                             <h3 class="text-xl font-semibold text-dark-navy mb-1">Premium Sunglasses</h3>
                             <p class="text-gray-600 mb-3">UV Protection</p>
                             <span class="text-2xl font-bold text-primary-blue">₹ 2,499</span>
-                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                            <button onclick="addToCart('Premium Sunglasses', 2499)" data-name="Premium Sunglasses" data-price="2499" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
                         </div>
                     </div>
 
@@ -237,7 +237,7 @@
                             <h3 class="text-xl font-semibold text-dark-navy mb-1">Blue Light Lenses</h3>
                             <p class="text-gray-600 mb-3">Anti-Glare</p>
                             <span class="text-2xl font-bold text-primary-blue">₹ 1,450</span>
-                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                            <button onclick="addToCart('Blue Light Lenses', 1450)" data-name="Blue Light Lenses" data-price="1450" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
                         </div>
                     </div>
 
@@ -247,7 +247,7 @@
                             <h3 class="text-xl font-semibold text-dark-navy mb-1">Daily Contact Lenses</h3>
                             <p class="text-gray-600 mb-3">Maximum Comfort</p>
                             <span class="text-2xl font-bold text-primary-blue">₹ 999</span>
-                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                            <button onclick="addToCart('Daily Contact Lenses', 999)" data-name="Daily Contact Lenses" data-price="999" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
                         </div>
                     </div>
 
@@ -328,16 +328,22 @@
                     Your Shopping Cart (<span id="cart-counter-display">0</span> Items)
                 </h2>
                 
-                <div class="bg-light-blue-bg p-8 rounded-xl shadow-xl hidden-item" data-delay="0.3">
-                    <p class="text-center text-xl text-dark-navy font-semibold">
-                        This is your checkout area. Items added will reflect in the counter above!
-                    </p>
-                    <div class="mt-8 text-center">
-                        <a href="#featured" class="inline-block px-10 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300">
-                            Continue Shopping
-                        </a>
+                <div id="cart-content" class="bg-light-blue-bg p-6 rounded-xl shadow-xl hidden-item" data-delay="0.3">
+                    <div id="cart-item-list" class="space-y-4">
+                        </div>
+
+                    <div id="cart-footer" class="mt-6 pt-4 border-t border-primary-blue/30">
+                        <div class="flex justify-between font-bold text-2xl text-dark-navy">
+                            <span>Subtotal:</span>
+                            <span id="cart-total">₹ 0</span>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <a href="#featured" id="checkout-button" class="inline-block px-10 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300">
+                                Continue Shopping
+                            </a>
+                        </div>
                     </div>
-                    </div>
+                </div>
             </div>
         </section>
 
@@ -420,34 +426,89 @@
     </footer>
 
     <script>
-        let cartCount = 0;
+        // -- Cart Logic --
+        let cartItems = [];
+        const products = {
+            'Classic Frames': { price: 1999 },
+            'Premium Sunglasses': { price: 2499 },
+            'Blue Light Lenses': { price: 1450 },
+            'Daily Contact Lenses': { price: 999 },
+        };
         const desktopCartLink = document.getElementById('desktop-cart-link');
         const mobileCartLink = document.getElementById('mobile-cart-link');
         const toast = document.getElementById('toast-notification');
+        const toastMessage = document.getElementById('toast-message');
         const cartDisplay = document.getElementById('cart-counter-display');
+        const cartItemList = document.getElementById('cart-item-list');
+        const cartTotalDisplay = document.getElementById('cart-total');
+        const cartFooter = document.getElementById('cart-footer');
+        const emptyCartHTML = `
+            <div class="text-center p-4">
+                <p class="text-xl text-dark-navy font-semibold">Your cart is empty. Add some amazing eyewear!</p>
+            </div>
+        `;
+        const checkoutButtonHTML = `
+            <a href="#" id="checkout-button-link" class="inline-block px-10 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300">
+                Proceed to Checkout
+            </a>
+        `;
 
         function updateCartDisplay() {
-            const text = `Cart (${cartCount})`;
+            let totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            let totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            
+            // 1. Update counter in header/mobile menu
+            const text = `Cart (${totalItems})`;
             desktopCartLink.textContent = text;
             mobileCartLink.textContent = text;
-            cartDisplay.textContent = cartCount;
+            cartDisplay.textContent = totalItems;
+            
+            // 2. Render item list
+            if (totalItems === 0) {
+                cartItemList.innerHTML = emptyCartHTML;
+                cartTotalDisplay.textContent = '₹ 0';
+                cartFooter.querySelector('.mt-6').innerHTML = `<a href="#featured" class="inline-block px-10 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300">Continue Shopping</a>`;
+            } else {
+                cartItemList.innerHTML = cartItems.map(item => `
+                    <div class="flex justify-between items-center border-b border-primary-blue/10 pb-2">
+                        <span class="font-semibold">${item.name} (x${item.quantity})</span>
+                        <span class="text-dark-navy font-bold">₹ ${(item.quantity * item.price).toLocaleString('en-IN')}</span>
+                    </div>
+                `).join('');
+                
+                cartTotalDisplay.textContent = `₹ ${totalPrice.toLocaleString('en-IN')}`;
+                
+                // Change 'Continue Shopping' to 'Proceed to Checkout'
+                cartFooter.querySelector('.mt-6').innerHTML = checkoutButtonHTML;
+                cartFooter.querySelector('#checkout-button-link').href = "#"; // Replace with your actual checkout URL
+            }
         }
 
-        function showToast() {
-            // Show toast
+        function showToast(productName) {
+            toastMessage.textContent = `${productName} added to cart!`;
             toast.classList.add('show');
-            
-            // Hide toast after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        function addToCart() {
-            cartCount++;
+        function addToCart(productName, productPrice) {
+            const existingItem = cartItems.find(item => item.name === productName);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+            
             updateCartDisplay();
-            showToast();
+            showToast(productName);
         }
+        // -- End Cart Logic --
 
         // Initialize display on load
         document.addEventListener('DOMContentLoaded', updateCartDisplay);
