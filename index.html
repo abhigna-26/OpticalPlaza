@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opticalplaza - Premium Eyewear E-commerce</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        // Custom Tailwind Configuration (Deep Blue/Navy Palette)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#006699',      /* Main Accent (Royal Blue) */
+                        'dark-navy': '#001A33',         /* Darker Blue for text/footer */
+                        'light-blue-bg': '#EBF5FF',     /* Light Blue/Off-White for section backgrounds */
+                        'off-white': '#F5F8FB',         /* Main page background */
+                        'talent-orange': '#FF8C00',     /* Floating Icon color */
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'heading': ['Montserrat', 'sans-serif'] 
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* FONT STYLES */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F8FB; 
+            color: #333;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Hero Section Styling */
+        .hero-bg {
+            background: linear-gradient(135deg, #006699 0%, #001A33 100%);
+        }
+        
+        /* Custom Logo/Branding Styling (Kept simple, no logo image placeholder) */
+        .header-branding {
+            height: 48px; 
+            width: auto; 
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer Logo Styling */
+        .footer-talentronaut-logo {
+            height: 20px; 
+            width: auto;
+            object-fit: contain;
+            filter: brightness(1.5); 
+            margin-left: 8px;
+        }
+        
+        /* FLOATING TALENTRONAUT ICON */
+        .float-talentronaut {
+            position: fixed;
+            bottom: 1.5rem; 
+            right: 1.5rem; 
+            z-index: 50;
+            animation: float 4s ease-in-out infinite;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* DYNAMIC ANIMATION: Product Card Hover */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* DYNAMIC ANIMATION: Hero CTA Pulse */
+        @keyframes pulse-once {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .animate-pulse-once {
+            animation: pulse-once 1s ease-in-out 1;
+        }
+
+        /* TOAST NOTIFICATION STYLES */
+        #toast-notification {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 60;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+        }
+        #toast-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        /* Modern Scroll Reveal Animation */
+        .hidden-item {
+            opacity: 0;
+            filter: blur(2px);
+            transform: translateY(20px);
+            transition: all 0.9s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+        .show-item {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+
+        /* Custom text selection color */
+        ::selection {
+            background: #006699; 
+            color: #F5F8FB;     
+        }
+    </style>
+</head>
+
+<body class="bg-off-white text-gray-800 antialiased overflow-x-hidden">
+
+    <div id="toast-notification" class="bg-primary-blue text-white p-4 rounded-lg shadow-xl flex items-center space-x-3">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span>Item successfully added to cart!</span>
+    </div>
+
+    <a href="https://www.talentronaut.in/" target="_blank"
+        class="float-talentronaut p-3 bg-talent-orange rounded-full shadow-2xl hover:scale-105 transition duration-300"
+        aria-label="Promoting Talentronaut - click to visit Talentronaut website">
+        
+        <img src="logo.jpg" alt="Talentronauts Logo" class="h-6 w-6 object-contain">
+    </a>
+
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-md border-b border-primary-blue/30">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            
+            <div class="flex items-center">
+                <a href="#hero" class="flex items-center group header-branding">
+                    
+                    <span class="text-3xl font-heading font-extrabold text-dark-navy transition duration-300">Opticalplaza</span>
+                </a>
+            </div>
+
+            <div class="hidden md:flex space-x-8 text-lg font-semibold">
+                <a href="#featured" class="text-dark-navy hover:text-primary-blue transition duration-300">Shop</a>
+                <a href="#categories" class="text-dark-navy hover:text-primary-blue transition duration-300">Categories</a>
+                <a href="#about" class="text-dark-navy hover:text-primary-blue transition duration-300">About</a>
+                <a href="#contact" class="text-dark-navy hover:text-primary-blue transition duration-300">Contact</a>
+                <a href="#cart-section" id="desktop-cart-link" class="text-white bg-primary-blue px-6 py-2 rounded-full hover:bg-dark-navy transition duration-300 shadow-md">Cart (0)</a>
+            </div>
+
+            <button id="mobile-menu-btn" class="md:hidden text-primary-blue hover:text-dark-navy focus:outline-none">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </nav>
+
+        <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 space-y-1 bg-light-blue-bg shadow-lg">
+            <a href="#featured" class="block px-3 py-2 rounded-md text-base font-medium text-dark-navy hover:bg-off-white hover:text-primary-blue">Shop</a>
+            <a href="#categories" class="block px-3 py-2 rounded-md text-base font-medium text-dark-navy hover:bg-off-white hover:text-primary-blue">Categories</a>
+            <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-dark-navy hover:bg-off-white hover:text-primary-blue">About</a>
+            <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-dark-navy hover:bg-off-white hover:text-primary-blue">Contact</a>
+            <a href="#cart-section" id="mobile-cart-link" class="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary-blue hover:bg-dark-navy mt-2">Cart (0)</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="relative hero-bg py-28 md:py-48 text-center text-white overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 z-10 relative hidden-item" data-delay="0.1">
+                <h1 class="text-6xl sm:text-7xl lg:text-8xl font-heading font-extrabold leading-tight mb-6">
+                    See the World Clearly
+                </h1>
+                <p class="text-xl sm:text-2xl font-medium mb-10 max-w-3xl mx-auto opacity-90">
+                    Discover premium quality eyeglasses, sunglasses, and lenses. Style meets Vision.
+                </p>
+                <a href="#featured"
+                    class="inline-block px-12 py-5 text-xl font-bold text-primary-blue bg-off-white rounded-full shadow-2xl hover:bg-light-blue-bg transform hover:scale-[1.03] transition duration-300 animate-pulse-once">
+                    Shop New Arrivals
+                </a>
+            </div>
+        </section>
+
+        <section id="featured" class="py-24 md:py-36 bg-off-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-5xl font-heading font-bold text-center text-dark-navy mb-16 hidden-item" data-delay="0.1">
+                    Best Sellers This Month
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden-item product-card" data-delay="0.2">
+                        <img src="eyeglasses1.jpg" alt="Modern Eyeglasses" class="w-full h-48 object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="text-xl font-semibold text-dark-navy mb-1">Classic Frames</h3>
+                            <p class="text-gray-600 mb-3">Stylish & Durable</p>
+                            <span class="text-2xl font-bold text-primary-blue">₹ 1,999</span>
+                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden-item product-card" data-delay="0.4">
+                        <img src="sunny.avif" alt="Designer Sunglasses" class="w-full h-48 object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="text-xl font-semibold text-dark-navy mb-1">Premium Sunglasses</h3>
+                            <p class="text-gray-600 mb-3">UV Protection</p>
+                            <span class="text-2xl font-bold text-primary-blue">₹ 2,499</span>
+                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden-item product-card" data-delay="0.6">
+                        <img src="uvvv.jpeg" alt="Blue light blocking lenses" class="w-full h-48 object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="text-xl font-semibold text-dark-navy mb-1">Blue Light Lenses</h3>
+                            <p class="text-gray-600 mb-3">Anti-Glare</p>
+                            <span class="text-2xl font-bold text-primary-blue">₹ 1,450</span>
+                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hidden-item product-card" data-delay="0.8">
+                        <img src="lenses.jpg" alt="Contact Lenses" class="w-full h-48 object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="text-xl font-semibold text-dark-navy mb-1">Daily Contact Lenses</h3>
+                            <p class="text-gray-600 mb-3">Maximum Comfort</p>
+                            <span class="text-2xl font-bold text-primary-blue">₹ 999</span>
+                            <button onclick="addToCart()" class="mt-3 w-full py-2 bg-primary-blue text-white rounded-lg hover:bg-dark-navy transition">Add to Cart</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-16 hidden-item" data-delay="1.0">
+                    <a href="#categories" class="inline-block px-10 py-4 text-xl font-bold text-white bg-dark-navy rounded-full shadow-lg hover:bg-primary-blue transition duration-300">
+                        View All Collections
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="categories" class="py-24 md:py-36 bg-light-blue-bg text-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-5xl font-heading font-bold text-dark-navy mb-16 hidden-item" data-delay="0.1">
+                    Browse Our Categories
+                </h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    
+                    <div class="p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl product-card transition duration-300 hidden-item" data-delay="0.2">
+                        <img src="eyeglasses.jpg" alt="Eyeglasses" class="rounded-lg mb-4 w-full h-32 object-cover">
+                        <h3 class="text-xl font-heading font-semibold text-dark-navy">Eyeglasses</h3>
+                    </div>
+
+                    <div class="p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl product-card transition duration-300 hidden-item" data-delay="0.4">
+                        <img src="sunnn.webp" alt="Sunglasses" class="rounded-lg mb-4 w-full h-32 object-cover">
+                        <h3 class="text-xl font-heading font-semibold text-dark-navy">Sunglasses</h3>
+                    </div>
+
+                    <div class="p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl product-card transition duration-300 hidden-item" data-delay="0.6">
+                        <img src="leneses.jpg" alt="Contact Lenses" class="rounded-lg mb-4 w-full h-32 object-cover">
+                        <h3 class="text-xl font-heading font-semibold text-dark-navy">Contact Lenses</h3>
+                    </div>
+
+                    <div class="p-6 bg-white rounded-xl shadow-lg hover:shadow-2xl product-card transition duration-300 hidden-item" data-delay="0.8">
+                        <img src="accc.jpeg" alt="Accessories" class="rounded-lg mb-4 w-full h-32 object-cover">
+                        <h3 class="text-xl font-heading font-semibold text-dark-navy">Accessories</h3>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        
+        <section id="about" class="py-24 md:py-36 bg-off-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-5xl font-heading font-bold text-center text-dark-navy mb-16 hidden-item" data-delay="0.1">
+                    Why Shop at Opticalplaza?
+                </h2>
+                <div class="grid md:grid-cols-3 gap-10 text-center">
+                    
+                    <div class="p-6 hidden-item" data-delay="0.2">
+                        <svg class="h-12 w-12 text-primary-blue mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002.944 12c0 3.07 1.58 5.794 3.996 7.37A13.04 13.04 0 0012 21.056c3.07 0 5.794-1.58 7.37-3.996A13.04 13.04 0 0021.056 12a12.01 12.01 0 00-3.04-8.618z"/></svg>
+                        <h3 class="text-xl font-heading font-bold text-dark-navy mb-2">Certified Quality</h3>
+                        <p class="text-gray-600">All eyewear meets international quality and safety standards for optimal vision.</p>
+                    </div>
+
+                    <div class="p-6 hidden-item" data-delay="0.4">
+                        <svg class="h-12 w-12 text-primary-blue mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2v5l-3-3m5.5-5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+                        <h3 class="text-xl font-heading font-bold text-dark-navy mb-2">Affordable Luxury</h3>
+                        <p class="text-gray-600">Premium design and materials at prices that work for your budget.</p>
+                    </div>
+                    
+                    <div class="p-6 hidden-item" data-delay="0.6">
+                        <svg class="h-12 w-12 text-primary-blue mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <h3 class="text-xl font-heading font-bold text-dark-navy mb-2">Fast Shipping</h3>
+                        <p class="text-gray-600">Reliable and quick delivery across Vaishali, Ghaziabad, UP, and India.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="cart-section" class="py-24 md:py-36 bg-white border-t-4 border-primary-blue/50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-5xl font-heading font-bold text-center text-dark-navy mb-12 hidden-item" data-delay="0.1">
+                    Your Shopping Cart (<span id="cart-counter-display">0</span> Items)
+                </h2>
+                
+                <div class="bg-light-blue-bg p-8 rounded-xl shadow-xl hidden-item" data-delay="0.3">
+                    <p class="text-center text-xl text-dark-navy font-semibold">
+                        This is your checkout area. Items added will reflect in the counter above!
+                    </p>
+                    <div class="mt-8 text-center">
+                        <a href="#featured" class="inline-block px-10 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300">
+                            Continue Shopping
+                        </a>
+                    </div>
+                    </div>
+            </div>
+        </section>
+
+
+        <section id="contact" class="py-16 md:py-24 bg-light-blue-bg">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center hidden-item" data-delay="0.1">
+                <h2 class="text-4xl font-heading font-bold text-dark-navy mb-6">Need Assistance or a Prescription Check?</h2>
+                <p class="text-xl text-gray-700 mb-8">
+                    Contact us in Vaishali, Ghaziabad, for personalized service.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <a href="https://wa.me/919868544080" target="_blank"
+                        class="inline-block px-8 py-3 text-lg font-bold text-white bg-primary-blue rounded-full hover:bg-dark-navy transition duration-300 shadow-lg">
+                        WhatsApp Us (9868544080)
+                    </a>
+                    <a href="mailto:sanjay.sharma78@gmail.com"
+                        class="inline-block px-8 py-3 text-lg font-bold text-primary-blue border-2 border-primary-blue rounded-full hover:bg-primary-blue hover:text-white transition duration-300">
+                        Email Us
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark-navy text-off-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 border-b border-primary-blue/50 pb-8 mb-8">
+                
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        
+                        <span class="text-2xl font-heading font-bold">Opticalplaza</span>
+                    </div>
+                    <p class="text-sm text-light-blue-bg">Your trusted source for clear vision and fashionable eyewear since 2024. Located in Vaishali, UP.</p>
+                </div>
+
+                
+                <div>
+                    <h4 class="font-heading font-semibold text-primary-blue mb-4 text-lg">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#featured" class="text-off-white hover:text-primary-blue transition">New Arrivals</a></li>
+                        <li><a href="#categories" class="text-off-white hover:text-primary-blue transition">Categories</a></li>
+                        <li><a href="#about" class="text-off-white hover:text-primary-blue transition">Why Choose Us</a></li>
+                        <li><a href="#contact" class="text-off-white hover:text-primary-blue transition">Contact/Support</a></li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <h4 class="font-heading font-semibold text-primary-blue mb-4 text-lg">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><span class="font-semibold">Email:</span> <a href="mailto:sanjay.sharma78@gmail.com" class="text-off-white hover:text-primary-blue transition">sanjay.sharma78@gmail.com</a></li>
+                        <li><span class="font-semibold">WhatsApp:</span> <a href="https://wa.me/919868544080" target="_blank" class="text-off-white hover:text-primary-blue transition">+91 9868544080</a></li>
+                        <li><span class="font-semibold">Location:</span> Vaishali, Ghaziabad, UP</li>
+                    </ul>
+                </div>
+
+                
+                <div>
+                    <h4 class="font-heading font-semibold text-primary-blue mb-4 text-lg">Products</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#featured" class="text-off-white hover:text-primary-blue transition">Eyeglasses</a></li>
+                        <li><a href="#featured" class="text-off-white hover:text-primary-blue transition">Sunglasses</a></li>
+                        <li><a href="#featured" class="text-off-white hover:text-primary-blue transition">Contact Lenses</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center text-sm text-gray-400 mt-8 flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <span>&copy; <span id="current-year"></span> Opticalplaza. All rights reserved.</span>
+                <span class="hidden sm:inline">|</span> 
+                <a href="https://www.talentronaut.in/" target="_blank" 
+                   class="text-primary-blue hover:text-light-blue-bg font-semibold transition duration-300 inline-flex items-center space-x-1">
+                    <span>Designed by Talentronaut Technologies</span>
+                    
+                    <img src="logo.jpg" alt="Talentronauts Logo" class="footer-talentronaut-logo">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cartCount = 0;
+        const desktopCartLink = document.getElementById('desktop-cart-link');
+        const mobileCartLink = document.getElementById('mobile-cart-link');
+        const toast = document.getElementById('toast-notification');
+        const cartDisplay = document.getElementById('cart-counter-display');
+
+        function updateCartDisplay() {
+            const text = `Cart (${cartCount})`;
+            desktopCartLink.textContent = text;
+            mobileCartLink.textContent = text;
+            cartDisplay.textContent = cartCount;
+        }
+
+        function showToast() {
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function addToCart() {
+            cartCount++;
+            updateCartDisplay();
+            showToast();
+        }
+
+        // Initialize display on load
+        document.addEventListener('DOMContentLoaded', updateCartDisplay);
+        
+        // Set Current Year in Footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Toggle Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // SCROLL REVEAL LOGIC
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.getAttribute('data-delay') || '0s';
+                    entry.target.style.transitionDelay = delay;
+                    entry.target.classList.add('show-item');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1, 
+            rootMargin: '0px 0px -50px 0px' 
+        });
+
+        document.querySelectorAll('.hidden-item').forEach((element) => {
+            observer.observe(element);
+        });
+
+        // Initialize Hero section immediately as it's typically always visible
+        document.querySelector('#hero .hidden-item').classList.add('show-item');
+    </script>
+</body>
+</html>
